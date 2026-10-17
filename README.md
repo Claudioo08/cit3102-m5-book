@@ -1,58 +1,94 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## 1. Project Information
+* **Project Title:** Build Your Own API (BOOK API)
+* **Partner 1:** <Padua, Justine Bryan R.>
+* **Section:** BSIT-IT2E
+* **Resource:** Book (Fields: `title` [String], `author` [String], `genre` [String], `pages` [Integer])
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+## 2. Setup Steps (Fresh Clone)
+1. Clone the repository:
+```
+   git clone https://github.com/Claudioo08/cit3102-m5-book.git
+   cd cit3102-m5-book
+```
+2. Install PHP dependencies:
+```
+   composer install
+```
+3. Configure environment:
+```
+   cp .env.example .env
+   php artisan key:generate
+```
+4. Create the SQLite database file:
+```
+   touch database/database.sqlite
+```
+   On Windows PowerShell, use `New-Item database/database.sqlite` instead.
+5. Run migrations:
+```
+   php artisan migrate
+```
+6. Start the development server:
+```
+   php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## 3. API Routes Table
 
-## Contributing
+| Verb | Path | What it does | Needs Token? |
+| :--- | :--- | :--- | :--- |
+| POST | /api/register | Creates a new user and returns a token | No |
+| POST | /api/login | Logs in and returns a token | No |
+| POST | /api/logout | Revokes the current token | Yes |
+| GET | /api/me | Shows the logged-in user | Yes |
+| GET | /api/books | Lists books (filter with ?genre= and ?author=) | Yes |
+| POST | /api/books | Creates a book | Yes |
+| GET | /api/books/{book} | Shows one book | Yes |
+| PUT | /api/books/{book} | Updates a book | Yes |
+| DELETE | /api/books/{book} | Deletes a book | Yes |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 4. API Testing Screenshots
 
-## Code of Conduct
+1. POST /api/register (201)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+![1 - Register](docs/1.png)
 
-## Security Vulnerabilities
+2. POST /api/login (200)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+![2 - Login](docs/2.png)
 
-## License
+3. GET /api/books with no token (401)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+![3 - No token](docs/3.png)
+
+4. GET /api/books with token (200)
+
+![4 - With token](docs/4.png)
+
+5. POST /api/books with valid data (201)
+
+![5 - Create book](docs/5.png)
+
+6. POST /api/books with a required field missing (422)
+
+![6 - Validation error](docs/6.png)
+
+7. GET /api/books/1 (200)
+
+![7 - Show book](docs/7.png)
+
+8. GET /api/books/99999 (404)
+
+![8 - Not found](docs/8.png)
+
+9. PUT /api/books/1 (200)
+
+![9 - Update book](docs/9.png)
+
+10. DELETE /api/books/1 (204)
+
+![10 - Delete book](docs/10.png)
+
+## 5. Why does DELETE return 204 and not 200?
+
+DELETE returns 204 because the delete worked, but there is nothing to send back. After the book is deleted, it does not exist anymore, so there is no data to show in the response. A 200 status usually comes with a body, like the book or a message. A 204 status has an empty body, and the status code alone tells the client that it worked.
